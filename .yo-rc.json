@@ -1,0 +1,32 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "se.matslexell.matsplanningpoker"
+    },
+    "jhipsterVersion": "5.4.0",
+    "applicationType": "monolith",
+    "baseName": "MatsPlanningPoker",
+    "packageName": "se.matslexell.matsplanningpoker",
+    "packageFolder": "se/matslexell/matsplanningpoker",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": "spring-websocket",
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "OGY2NGNjZGRhZWJlZTE3NDA2NTc0NmZlOGEzMmJkOTU4ZmQzOTJhODQzY2VmNzc2ODBlMWU4M2YxMmFjNjkzZDMwZjFlY2Y4ODAwZjViMjNhNWRhZGMzOTU1M2YxMzA3NTBmZjQxNGVlMWU4ZmRhMTAwZjlmYjQyYTAwZWQ2MzY=",
+    "clientFramework": "angularX",
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "enableTranslation": false
+  }
+}

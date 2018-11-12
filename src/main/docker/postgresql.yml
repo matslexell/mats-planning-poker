@@ -1,0 +1,11 @@
+version: '2'
+services:
+    matsplanningpoker-postgresql:
+        image: postgres:10.4
+        # volumes:
+        #     - ~/volumes/jhipster/MatsPlanningPoker/postgresql/:/var/lib/postgresql/data/
+        environment:
+            - POSTGRES_USER=MatsPlanningPoker
+            - POSTGRES_PASSWORD=
+        ports:
+            - 5432:5432
