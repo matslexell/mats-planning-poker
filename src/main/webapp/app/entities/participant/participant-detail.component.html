@@ -1,0 +1,41 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="participant">
+            <h2><span>Participant</span> {{participant.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span>Name</span></dt>
+                <dd>
+                    <span>{{participant.name}}</span>
+                </dd>
+                <dt><span>Vote</span></dt>
+                <dd>
+                    <span>{{participant.vote}}</span>
+                </dd>
+                <dt><span>Jwt</span></dt>
+                <dd>
+                    <span>{{participant.jwt}}</span>
+                </dd>
+                <dt><span>Meeting</span></dt>
+                <dd>
+                    <div *ngIf="participant.meetingId">
+                        <a [routerLink]="['/meeting', participant.meetingId, 'view']">{{participant.meetingName}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/participant', participant.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

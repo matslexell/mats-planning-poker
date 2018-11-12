@@ -38,6 +38,9 @@ public class CacheConfiguration {
             cm.createCache(se.matslexell.matsplanningpoker.domain.User.class.getName(), jcacheConfiguration);
             cm.createCache(se.matslexell.matsplanningpoker.domain.Authority.class.getName(), jcacheConfiguration);
             cm.createCache(se.matslexell.matsplanningpoker.domain.User.class.getName() + ".authorities", jcacheConfiguration);
+            cm.createCache(se.matslexell.matsplanningpoker.domain.Meeting.class.getName(), jcacheConfiguration);
+            cm.createCache(se.matslexell.matsplanningpoker.domain.Meeting.class.getName() + ".participants", jcacheConfiguration);
+            cm.createCache(se.matslexell.matsplanningpoker.domain.Participant.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

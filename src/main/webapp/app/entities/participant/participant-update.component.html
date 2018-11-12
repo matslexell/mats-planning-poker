@@ -1,0 +1,46 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="jhi-participant-heading">Create or edit a Participant</h2>
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+                <div class="form-group" [hidden]="!participant.id">
+                    <label for="id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="participant.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_name">Name</label>
+                    <input type="text" class="form-control" name="name" id="field_name"
+                        [(ngModel)]="participant.name" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_vote">Vote</label>
+                    <input type="text" class="form-control" name="vote" id="field_vote"
+                        [(ngModel)]="participant.vote" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_jwt">Jwt</label>
+                    <input type="text" class="form-control" name="jwt" id="field_jwt"
+                        [(ngModel)]="participant.jwt" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_meeting">Meeting</label>
+                    <select class="form-control" id="field_meeting" name="meeting" [(ngModel)]="participant.meetingId" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="meetingOption.id" *ngFor="let meetingOption of meetings; trackBy: trackMeetingById">{{meetingOption.name}}</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span>Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span>Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

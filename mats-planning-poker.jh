@@ -1,0 +1,23 @@
+entity Meeting {
+    name String,
+    uuid String,
+    createdDate Instant
+}
+
+entity Participant {
+    name String,
+    vote String,
+    jwt String
+}
+
+relationship OneToMany {
+   Meeting{participant(name)} to Participant{meeting(name)}
+}
+
+// Set pagination options
+paginate all with infinite-scroll
+
+dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceClass
