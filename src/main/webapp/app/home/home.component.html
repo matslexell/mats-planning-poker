@@ -1,41 +1,29 @@
-<div class="row">
-    <div class="col-md-3">
-        <span class="hipster img-fluid rounded"></span>
-    </div>
-    <div class="col-md-9">
-        <h1 class="display-4">Welcome, Java Hipster!</h1>
-        <p class="lead">This is your homepage</p>
-
-        <div [ngSwitch]="isAuthenticated()">
-            <div class="alert alert-success" *ngSwitchCase="true">
-                <span id="home-logged-message" *ngIf="account"
-                   > You are logged in as user "{{account.login}}". </span>
-            </div>
-
-            <div class="alert alert-warning" *ngSwitchCase="false">
-                <span>If you want to </span>
-                <a class="alert-link" (click)="login()">sign in</a><span>, you can try the default accounts:<br/>- Administrator (login="admin" and password="admin") <br/>- User (login="user" and password="user").</span>
-            </div>
-            <div class="alert alert-warning" *ngSwitchCase="false">
-                <span>You don't have an account yet?</span>&nbsp;
-                <a class="alert-link" routerLink="register">Register a new account</a>
-            </div>
-        </div>
-
-        <p>
-            If you have any question on JHipster:
-        </p>
-
-        <ul>
-            <li><a href="https://www.jhipster.tech/" target="_blank" rel="noopener">JHipster homepage</a></li>
-            <li><a href="http://stackoverflow.com/tags/jhipster/info" target="_blank" rel="noopener">JHipster on Stack Overflow</a></li>
-            <li><a href="https://github.com/jhipster/generator-jhipster/issues?state=open" target="_blank" rel="noopener">JHipster bug tracker</a></li>
-            <li><a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" rel="noopener">JHipster public chat room</a></li>
-            <li><a href="https://twitter.com/java_hipster" target="_blank" rel="noopener">follow @java_hipster on Twitter</a></li>
-        </ul>
-
-        <p>
-            <span>If you like JHipster, don't forget to give us a star on</span> <a href="https://github.com/jhipster/generator-jhipster" target="_blank" rel="noopener">GitHub</a>!
-        </p>
+<div>
+    <div class="home-center">
+        <h1>Welcome to planning poker!</h1>
+        <br>
+        <br>
+        <form class="home-center" name="form" role="form" (ngSubmit)="createMeeting()" #settingsForm="ngForm" novalidate>
+                <div class="form-group">
+                    <label class="form-control-label">Create new planning poker meeting</label>
+                    <input type="text" class="form-control" id="meetingName" name="meetingName" placeholder="Give the meeting a name"
+                           [(ngModel)]="meeting.name" minlength=1 maxlength=50 #meetingNameInput="ngModel" required>
+                    <div *ngIf="meetingNameInput.dirty && meetingNameInput.invalid">
+                        <small class="form-text text-danger"
+                           *ngIf="meetingNameInput.errors.required">
+                            The meeting name is required.
+                        </small>
+                        <small class="form-text text-danger"
+                           *ngIf="meetingNameInput.errors.minlength">
+                            The meeting name is required to be at least 1 character.
+                        </small>
+                        <small class="form-text text-danger"
+                           *ngIf="meetingNameInput.errors.maxlength">
+                           The meeting name cannot be longer than 50 characters.
+                        </small>
+                    </div>
+                </div>
+                <button type="submit" [disabled]="settingsForm.form.invalid" class="btn btn-primary">Create meeting</button>
+            </form>
     </div>
 </div>
