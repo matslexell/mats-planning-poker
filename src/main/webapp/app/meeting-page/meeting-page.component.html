@@ -1,1 +1,37 @@
-<h1>Meeting page</h1>
+<div *ngIf="meeting" class="meeting-center">
+        <h1>Planning poker meeting</h1>
+        <h3>{{meeting.name}}</h3>
+        <br>
+        <h5 *ngIf="meeting.participants">Number of participants: {{meeting.participants.length}}</h5>
+        <span><b>Meeting id:</b> <i>{{meeting.uuid}}</i></span>
+        <span><b>Meeting link:</b> <i>{{url}}</i></span>
+        <br>
+        <br>
+        <div class="my-vote col-md-4">
+                <b>My vote</b>
+                <div class="my-vote-inner">
+                        <div *ngFor="let value of planningPokerValues">
+                                <input name="options" ng-control="options" type="radio" [value]="value" [(ngModel)]="myVote">
+                                {{value}}<br>
+                        </div>
+                </div>
+                <button (click)="submitVote()" class="btn btn-primary meeting-center">Vote!</button>
+        </div>
+        <br>
+        <br>
+        <div class="vote-results col-md-4">
+                <b>Results</b>
+                <div>
+                        <div *ngFor="let result of results">
+                                <div class="vote-results-inner" >
+                                        <span>Planning poker value '{{result.value}}': &nbsp;</span>
+                                        <ngb-progressbar type="success" [value]="result.count"
+                                                [max]="meeting.participants.length">
+                                                <span class="progress-text">{{result.count}} / {{meeting.participants.length}} votes</span>
+                                        </ngb-progressbar>
+                                </div>
+                                <br>
+                        </div>
+                </div>
+        </div>
+</div>

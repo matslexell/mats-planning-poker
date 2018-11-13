@@ -1,0 +1,33 @@
+.meeting-center {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.my-vote {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.my-vote-inner {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.vote-results {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 300px;
+}
+
+.vote-results-inner {
+    display: flex;
+}
+
+.progress-text {
+    color: #000;
+    font-weight: bold;
+}
