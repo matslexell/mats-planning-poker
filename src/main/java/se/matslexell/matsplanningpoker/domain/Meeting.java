@@ -36,7 +36,7 @@ public class Meeting implements Serializable {
     @Column(name = "created_date")
     private Instant createdDate;
 
-    @OneToMany(mappedBy = "meeting")
+    @OneToMany(mappedBy = "meeting", cascade = {CascadeType.MERGE})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Participant> participants = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

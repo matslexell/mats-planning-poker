@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Meeting } from 'app/shared/model/meeting.model';
+import { SessionStorageService } from 'ngx-webstorage';
+import { MeetingService } from 'app/entities/meeting';
 
 @Component({
     selector: 'jhi-meeting-page',
@@ -15,7 +17,13 @@ export class MeetingPageComponent implements OnInit {
     myVote: String = '';
     results: any;
 
-    constructor(private activatedRoute: ActivatedRoute, private location: Location, private router: Router) {}
+    constructor(
+        private activatedRoute: ActivatedRoute,
+        private location: Location,
+        private router: Router,
+        private $sessionStorage: SessionStorageService,
+        private meetingService: MeetingService
+    ) {}
 
     public ngOnInit(): void {
         this.meeting = {
@@ -30,16 +38,25 @@ export class MeetingPageComponent implements OnInit {
             uuid: '8kvg3mdslm3v'
         };
 
+        this.meetingService.joinMeeting('123', 'mats').subscribe(jwt => {
+            console.log('JWT is ', jwt);
+            this.$sessionStorage.store('authenticationToken', jwt);
+        });
+
         this.results = this.calculateResult(this.meeting, this.planningPokerValues);
 
         console.log('Results', this.results);
 
-        const meetingId = this.activatedRoute.snapshot.paramMap.get('meetingId');
+        const meetingUuid = this.activatedRoute.snapshot.paramMap.get('meetingUuid');
+
+        this.meetingService.getByUuid(meetingUuid).subscribe(meeting => {
+            console.log('Meeting loaded by uuid', meeting);
+        });
 
         const url =
             this.router.url.lastIndexOf('?') === -1 ? this.router.url : this.router.url.substring(0, this.router.url.lastIndexOf('?')); // Remove query params if present
 
-        console.log('Meeting Id:', meetingId);
+        console.log('Meeting Id:', meetingUuid);
 
         this.activatedRoute.queryParams.subscribe(params => {
             console.log('Participant Name:', params.participantName);

@@ -32,9 +32,19 @@ export class MeetingService {
             .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
     }
 
+    joinMeeting(meetingUuid: String, participantName: String): Observable<any> {
+        return this.http.put(`${this.resourceUrl}/join/${meetingUuid}/${participantName}`, { observe: 'response' });
+    }
+
     find(id: number): Observable<EntityResponseType> {
         return this.http
             .get<IMeeting>(`${this.resourceUrl}/${id}`, { observe: 'response' })
+            .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
+    }
+
+    getByUuid(uuid: String): Observable<EntityResponseType> {
+        return this.http
+            .get<IMeeting>(`${this.resourceUrl}/uuid/${uuid}`, { observe: 'response' })
             .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
     }
 

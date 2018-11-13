@@ -81,4 +81,18 @@ public class ParticipantService {
         log.debug("Request to delete Participant : {}", id);
         participantRepository.deleteById(id);
     }
+	
+	public boolean existsByMeetingUuidAndParticipantJwt(String meetingUuid, String jwt) {
+        return false;
+	}
+    
+    public void deleteByJwt(String jwt) {
+        participantRepository.deleteByJwt(jwt);
+    }
+    
+    public Participant createAndSaveNewParticipant(String name, String jwt) { // TODO implement
+        log.debug("Request to create and save new participant with name : {}, jwt : {}", name, jwt);
+        Participant participant = new Participant().jwt(jwt).name(name);
+        return participantRepository.save(participant);
+    }
 }

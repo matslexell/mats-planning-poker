@@ -1,10 +1,13 @@
 package se.matslexell.matsplanningpoker.web.rest;
 
+import org.springframework.security.core.userdetails.UserDetailsService;
 import se.matslexell.matsplanningpoker.MatsPlanningPokerApp;
 
 import se.matslexell.matsplanningpoker.domain.Meeting;
 import se.matslexell.matsplanningpoker.repository.MeetingRepository;
+import se.matslexell.matsplanningpoker.security.jwt.TokenProvider;
 import se.matslexell.matsplanningpoker.service.MeetingService;
+import se.matslexell.matsplanningpoker.service.ParticipantService;
 import se.matslexell.matsplanningpoker.service.dto.MeetingDTO;
 import se.matslexell.matsplanningpoker.service.mapper.MeetingMapper;
 import se.matslexell.matsplanningpoker.web.rest.errors.ExceptionTranslator;
@@ -73,6 +76,15 @@ public class MeetingResourceIntTest {
 
     @Autowired
     private EntityManager em;
+    
+    @Autowired
+    private ParticipantService participantService;
+    
+    @Autowired
+    private TokenProvider tokenProvider;
+    
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     private MockMvc restMeetingMockMvc;
 
@@ -81,7 +93,7 @@ public class MeetingResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final MeetingResource meetingResource = new MeetingResource(meetingService);
+        final MeetingResource meetingResource = new MeetingResource(meetingService, participantService, tokenProvider, userDetailsService);
         this.restMeetingMockMvc = MockMvcBuilders.standaloneSetup(meetingResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

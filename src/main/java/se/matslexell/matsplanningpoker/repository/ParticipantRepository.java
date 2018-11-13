@@ -11,5 +11,6 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
-
+	
+	void deleteByJwt(String jwt);
 }

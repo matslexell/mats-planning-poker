@@ -8,11 +8,10 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity Meeting and its DTO MeetingDTO.
  */
-@Mapper(componentModel = "spring", uses = {})
+@Mapper(componentModel = "spring", uses = {ParticipantMapper.class})
 public interface MeetingMapper extends EntityMapper<MeetingDTO, Meeting> {
-
-
-    @Mapping(target = "participants", ignore = true)
+	
+    @Mapping(target = "createdDate", ignore = true)
     Meeting toEntity(MeetingDTO meetingDTO);
 
     default Meeting fromId(Long id) {

@@ -3,6 +3,7 @@ package se.matslexell.matsplanningpoker.service.dto;
 import java.time.Instant;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A DTO for the Meeting entity.
@@ -14,8 +15,16 @@ public class MeetingDTO implements Serializable {
     private String name;
 
     private String uuid;
-
-    private Instant createdDate;
+    
+    private Set<ParticipantDTO> participants;
+    
+    public Set<ParticipantDTO> getParticipants() {
+        return participants;
+    }
+    
+    public void setParticipants(Set<ParticipantDTO> participants) {
+        this.participants = participants;
+    }
 
     public Long getId() {
         return id;
@@ -41,14 +50,6 @@ public class MeetingDTO implements Serializable {
         this.uuid = uuid;
     }
 
-    public Instant getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Instant createdDate) {
-        this.createdDate = createdDate;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -69,14 +70,14 @@ public class MeetingDTO implements Serializable {
     public int hashCode() {
         return Objects.hashCode(getId());
     }
-
+    
     @Override
     public String toString() {
         return "MeetingDTO{" +
-            "id=" + getId() +
-            ", name='" + getName() + "'" +
-            ", uuid='" + getUuid() + "'" +
-            ", createdDate='" + getCreatedDate() + "'" +
-            "}";
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", participants=" + participants +
+                '}';
     }
 }

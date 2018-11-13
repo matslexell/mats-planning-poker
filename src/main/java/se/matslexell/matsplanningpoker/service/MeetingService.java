@@ -1,6 +1,7 @@
 package se.matslexell.matsplanningpoker.service;
 
 import se.matslexell.matsplanningpoker.domain.Meeting;
+import se.matslexell.matsplanningpoker.domain.Participant;
 import se.matslexell.matsplanningpoker.repository.MeetingRepository;
 import se.matslexell.matsplanningpoker.service.dto.MeetingDTO;
 import se.matslexell.matsplanningpoker.service.mapper.MeetingMapper;
@@ -80,5 +81,26 @@ public class MeetingService {
     public void delete(Long id) {
         log.debug("Request to delete Meeting : {}", id);
         meetingRepository.deleteById(id);
+    }
+	
+    @Transactional
+	public void addParticipantToMeeting(Participant participant, String meetingUuid) {
+		log.debug("Request to add Participant : {}, to Meeting with uuid : {}", participant, meetingUuid);
+	
+		Optional<Meeting> meetingOptional = meetingRepository.findByUuid(meetingUuid);
+        if(!meetingOptional.isPresent()) {
+            throw new RuntimeException("No meeting found with uuid: " + meetingUuid);
+        }
+        
+        meetingOptional.get().addParticipant(participant);
+	}
+    
+    public boolean existsByMeetingUuid(String meetingUuid) {
+        return meetingRepository.findByUuid(meetingUuid).isPresent();
+    }
+    
+    public Optional<MeetingDTO> findByUuid(String uudi) {
+        return meetingRepository.findByUuid(uudi)
+                .map(meetingMapper::toDto);
     }
 }

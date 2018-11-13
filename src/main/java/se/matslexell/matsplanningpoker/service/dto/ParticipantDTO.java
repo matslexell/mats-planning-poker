@@ -13,9 +13,7 @@ public class ParticipantDTO implements Serializable {
     private String name;
 
     private String vote;
-
-    private String jwt;
-
+    
     private Long meetingId;
 
     private String meetingName;
@@ -42,14 +40,6 @@ public class ParticipantDTO implements Serializable {
 
     public void setVote(String vote) {
         this.vote = vote;
-    }
-
-    public String getJwt() {
-        return jwt;
-    }
-
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
     }
 
     public Long getMeetingId() {
@@ -95,7 +85,6 @@ public class ParticipantDTO implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", vote='" + getVote() + "'" +
-            ", jwt='" + getJwt() + "'" +
             ", meeting=" + getMeetingId() +
             ", meeting='" + getMeetingName() + "'" +
             "}";
