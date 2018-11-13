@@ -49,12 +49,15 @@ export class MeetingPageComponent implements OnInit {
     }
 
     private calculateResult(meeting: Meeting, planningPokerValues: String[]): { value: String; count: Number }[] {
-        return planningPokerValues.map(planningPokerValue => {
+        const results = planningPokerValues.map(planningPokerValue => {
             return {
                 value: planningPokerValue,
                 count: meeting.participants.map(participant => participant.vote).filter(vote => vote === planningPokerValue).length
             };
         });
+        const noVoteCount = meeting.participants.filter(participant => planningPokerValues.find(a => a === participant.vote) === undefined)
+            .length;
+        return results.concat({ value: 'No vote', count: noVoteCount });
     }
 
     public submitVote() {

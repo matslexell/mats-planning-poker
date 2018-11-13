@@ -19,7 +19,7 @@
         </div>
         <br>
         <br>
-        <div class="vote-results col-md-4">
+        <div class="vote-results">
                 <b>Results</b>
                 <div>
                         <div *ngFor="let result of results">
@@ -27,7 +27,7 @@
                                         <span>Planning poker value '{{result.value}}': &nbsp;</span>
                                         <ngb-progressbar type="success" [value]="result.count"
                                                 [max]="meeting.participants.length">
-                                                <span class="progress-text">{{result.count}} / {{meeting.participants.length}} votes</span>
+                                                <span class="progress-text">{{result.count}} / {{meeting.participants.length}} participant votes</span>
                                         </ngb-progressbar>
                                 </div>
                                 <br>
