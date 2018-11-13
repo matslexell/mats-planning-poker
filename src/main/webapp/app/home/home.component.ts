@@ -5,6 +5,8 @@ import { JhiEventManager } from 'ng-jhipster';
 import { LoginModalService, Principal, Account } from 'app/core';
 import { Meeting } from 'app/shared/model/meeting.model';
 import { Participant } from 'app/shared/model/participant.model';
+import { Router } from '@angular/router';
+import { meetingPageRoute } from 'app/meeting-page';
 
 @Component({
     selector: 'jhi-home',
@@ -20,7 +22,12 @@ export class HomeComponent implements OnInit {
     existingMeeting: Meeting = {};
     joinerParticipant: Participant = {};
 
-    constructor(private principal: Principal, private loginModalService: LoginModalService, private eventManager: JhiEventManager) {}
+    constructor(
+        private principal: Principal,
+        private loginModalService: LoginModalService,
+        private eventManager: JhiEventManager,
+        private router: Router
+    ) {}
 
     ngOnInit() {
         this.principal.identity().then(account => {
@@ -47,9 +54,16 @@ export class HomeComponent implements OnInit {
 
     createMeeting() {
         console.log('createMeeting', this.newMeeting, this.creatorParticipant);
+        this.newMeeting.uuid = 'abc123'; // Todo, create meeting
+        this.router.navigate(['/planningPokerMeeting/' + this.newMeeting.uuid], {
+            queryParams: { participantName: this.creatorParticipant.name }
+        });
     }
 
     joinMeeting() {
         console.log('joinMeeting', this.existingMeeting, this.joinerParticipant);
+        this.router.navigate(['/planningPokerMeeting/' + this.existingMeeting.uuid], {
+            queryParams: { participantName: this.joinerParticipant.name }
+        });
     }
 }
