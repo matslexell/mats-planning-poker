@@ -3,27 +3,53 @@
         <h1>Welcome to planning poker!</h1>
         <br>
         <br>
-        <form class="home-center" name="form" role="form" (ngSubmit)="createMeeting()" #settingsForm="ngForm" novalidate>
-                <div class="form-group">
-                    <label class="form-control-label">Create new planning poker meeting</label>
-                    <input type="text" class="form-control" id="meetingName" name="meetingName" placeholder="Give the meeting a name"
-                           [(ngModel)]="meeting.name" minlength=1 maxlength=50 #meetingNameInput="ngModel" required>
-                    <div *ngIf="meetingNameInput.dirty && meetingNameInput.invalid">
-                        <small class="form-text text-danger"
-                           *ngIf="meetingNameInput.errors.required">
-                            The meeting name is required.
-                        </small>
-                        <small class="form-text text-danger"
-                           *ngIf="meetingNameInput.errors.minlength">
-                            The meeting name is required to be at least 1 character.
-                        </small>
-                        <small class="form-text text-danger"
-                           *ngIf="meetingNameInput.errors.maxlength">
-                           The meeting name cannot be longer than 50 characters.
-                        </small>
-                    </div>
+        <form class="home-center" name="form" role="form" (ngSubmit)="createMeeting()" #createMeetingForm="ngForm"
+            novalidate>
+            <div class="form-group">
+                <label class="form-control-label">Create new planning poker meeting</label>
+                <input type="text" class="form-control" id="meetingName" name="meetingName" placeholder="Give the meeting a name"
+                    [(ngModel)]="newMeeting.name" minlength=1 maxlength=50 #meetingNameInput="ngModel" required>
+                <div *ngIf="meetingNameInput.dirty && meetingNameInput.invalid">
+                    <small class="form-text text-danger" *ngIf="meetingNameInput.errors.required">
+                        The meeting name is required.
+                    </small>
+                    <small class="form-text text-danger" *ngIf="meetingNameInput.errors.minlength">
+                        The meeting name is required to be at least 1 character.
+                    </small>
+                    <small class="form-text text-danger" *ngIf="meetingNameInput.errors.maxlength">
+                        The meeting name cannot be longer than 50 characters.
+                    </small>
                 </div>
-                <button type="submit" [disabled]="settingsForm.form.invalid" class="btn btn-primary">Create meeting</button>
-            </form>
+                <br>
+                <input type="text" class="form-control" id="participantName" name="participantName" placeholder="Your name (optional)"
+                    [(ngModel)]="creatorParticipant.name" #participantNameInput="ngModel">
+            </div>
+            <button type="submit" [disabled]="createMeetingForm.form.invalid" class="btn btn-primary">Create meeting</button>
+        </form>
+        
+        <br>
+        <br>
+        <span>Or...</span>
+        <br>
+        <br>
+
+        <form class="home-center"  name="form" role="form" (ngSubmit)="joinMeeting()" #joinMeetingForm="ngForm" novalidate>
+
+            <div class="form-group">
+                <label class="form-control-label">Join existing planning poker meeting</label>
+                <input type="text" class="form-control" id="meetingId" name="meetingId" placeholder="Meeting id"
+                    [(ngModel)]="existingMeeting.uuid" #meetingIdInput="ngModel" required>
+                <div *ngIf="meetingIdInput.dirty && meetingIdInput.invalid">
+                    <small class="form-text text-danger" *ngIf="meetingIdInput.errors.required">
+                        The meeting id is required.
+                    </small>
+                </div>
+                <br>
+                <input type="text" class="form-control" id="participantName" name="participantName" placeholder="Your name (optional)"
+                    [(ngModel)]="joinerParticipant.name" #participantNameInput="ngModel">
+            </div>
+            <button type="submit" [disabled]="joinMeetingForm.form.invalid" class="btn btn-primary">Join meeting</button>
+        </form>
+
     </div>
 </div>

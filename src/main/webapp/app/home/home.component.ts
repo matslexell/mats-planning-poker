@@ -4,6 +4,7 @@ import { JhiEventManager } from 'ng-jhipster';
 
 import { LoginModalService, Principal, Account } from 'app/core';
 import { Meeting } from 'app/shared/model/meeting.model';
+import { Participant } from 'app/shared/model/participant.model';
 
 @Component({
     selector: 'jhi-home',
@@ -13,7 +14,11 @@ import { Meeting } from 'app/shared/model/meeting.model';
 export class HomeComponent implements OnInit {
     account: Account;
     modalRef: NgbModalRef;
-    meeting: Meeting;
+    newMeeting: Meeting = {};
+    creatorParticipant: Participant = {};
+
+    existingMeeting: Meeting = {};
+    joinerParticipant: Participant = {};
 
     constructor(private principal: Principal, private loginModalService: LoginModalService, private eventManager: JhiEventManager) {}
 
@@ -41,6 +46,10 @@ export class HomeComponent implements OnInit {
     }
 
     createMeeting() {
-        console.log('createMeeting');
+        console.log('createMeeting', this.newMeeting, this.creatorParticipant);
+    }
+
+    joinMeeting() {
+        console.log('joinMeeting', this.existingMeeting, this.joinerParticipant);
     }
 }
