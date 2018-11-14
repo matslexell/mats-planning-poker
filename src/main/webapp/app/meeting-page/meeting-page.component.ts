@@ -5,8 +5,9 @@ import { Meeting } from 'app/shared/model/meeting.model';
 import { SessionStorageService } from 'ngx-webstorage';
 import { MeetingService } from 'app/entities/meeting';
 import { ParticipantService } from 'app/entities/participant';
-import { LoginService } from 'app/core';
+import { LoginService, JhiTrackerService } from 'app/core';
 import { Participant } from 'app/shared/model/participant.model';
+import { MeetingUpdateService } from 'app/core/meeting-update/meeting-update.service';
 
 @Component({
     selector: 'jhi-meeting-page',
@@ -27,7 +28,9 @@ export class MeetingPageComponent implements OnInit {
         private location: Location,
         private router: Router,
         private meetingService: MeetingService,
-        private participantService: ParticipantService
+        private participantService: ParticipantService,
+        private meetingUpdateService: MeetingUpdateService,
+        private trackerService: JhiTrackerService
     ) {}
 
     public ngOnInit(): void {
@@ -74,6 +77,13 @@ export class MeetingPageComponent implements OnInit {
             this.meeting = data.body;
             this.results = this.calculateResult(this.meeting, this.planningPokerValues);
         });
+    }
+
+    public connect() {
+        this.meetingUpdateService.connect(this.meeting.uuid);
+        this.meetingUpdateService.subscribe(this.meeting.uuid);
+        // this.trackerService.connect();
+        // this.trackerService.subscribe();
     }
 
     public submitVote() {
