@@ -85,12 +85,9 @@ public class ParticipantService {
         log.debug("Request to delete Participant : {}", id);
         participantRepository.deleteById(id);
     }
-	
-	public boolean existsByMeetingUuidAndParticipantToken(String meetingUuid, String token) {
-        return false;
-	}
     
     public void deleteByToken(String token) {
+        log.debug("Request to delete participant with token : {}", token);
         participantRepository.deleteByToken(token);
     }
     
@@ -107,6 +104,7 @@ public class ParticipantService {
 	}
 	
 	public boolean existsByToken(String token) {
+        log.debug("Request to check if Participant exists by token : {}", token);
         return participantRepository.findByToken(token).isPresent();
 	}
     

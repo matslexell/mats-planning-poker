@@ -2,11 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Meeting } from 'app/shared/model/meeting.model';
-import { SessionStorageService } from 'ngx-webstorage';
 import { MeetingService } from 'app/entities/meeting';
 import { ParticipantService } from 'app/entities/participant';
-import { LoginService, JhiTrackerService } from 'app/core';
-import { Participant } from 'app/shared/model/participant.model';
 import { MeetingUpdateService } from 'app/core/meeting-update/meeting-update.service';
 import { JhiEventManager } from 'ng-jhipster';
 
@@ -52,7 +49,6 @@ export class MeetingPageComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        console.log('disconnect from group');
         this.meetingUpdateService.unsubscribe();
         this.meetingUpdateService.disconnect();
     }

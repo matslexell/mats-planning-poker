@@ -3,15 +3,8 @@ package se.matslexell.matsplanningpoker.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import se.matslexell.matsplanningpoker.domain.Participant;
-import se.matslexell.matsplanningpoker.security.SecurityUtils;
-import se.matslexell.matsplanningpoker.security.jwt.JWTFilter;
 import se.matslexell.matsplanningpoker.security.jwt.TokenProvider;
 import se.matslexell.matsplanningpoker.service.MeetingService;
 import se.matslexell.matsplanningpoker.service.ParticipantService;
@@ -28,9 +21,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import se.matslexell.matsplanningpoker.web.rest.vm.LoginVM;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -106,7 +97,7 @@ public class MeetingResource {
 	}
 	
 	/**
-	 * PUT  /meetings : Updates an existing meeting.
+	 * PUT  /meetings/ : Updates an existing meeting.
 	 *
 	 * @param meetingDTO the meetingDTO to update
 	 * @return the ResponseEntity with status 200 (OK) and with body the updated meetingDTO, or with status 400 (Bad
@@ -128,12 +119,14 @@ public class MeetingResource {
 	}
 	
 	/**
-	 * PUT  /meetings : Updates an existing meeting.
+	 * PUT  /meetings/join/:meetingUuid/:participantName : Updates an existing meeting and adds a new Participant with
+	 * name participantName
 	 *
-	 * @return the ResponseEntity with status 200 (OK) and with body the updated meetingDTO, or with status 400 (Bad
-	 * Request) if the meetingDTO is not valid, or with status 500 (Internal Server Error) if the meetingDTO couldn't be
-	 * updated
-	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 * @param meetingUuid
+	 * @param participantName
+	 * @return
+	 * @throws URISyntaxException
+	 * @throws JsonProcessingException
 	 */
 	@PutMapping("/meetings/join/{meetingUuid}/{participantName}")
 	@Timed
@@ -181,7 +174,7 @@ public class MeetingResource {
 	}
 	
 	/**
-	 * GET  /meetings/:id : get the "id" meeting.
+	 * GET  /meetings/uuid/:uuid : get the "uuid" meeting.
 	 *
 	 * @return the ResponseEntity with status 200 (OK) and with body the meetingDTO, or with status 404 (Not Found)
 	 */
@@ -206,18 +199,13 @@ public class MeetingResource {
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
 	}
 	
-	private ResponseEntity<UserJWTController.JWTToken> responseEntityFromJwt(String jwt) {
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
-		return new ResponseEntity<>(new UserJWTController.JWTToken(jwt), httpHeaders, HttpStatus.OK);
-		
-	}
 	
-	private boolean jwtIsPresentAndNonEmpty() {
-		return SecurityUtils.getCurrentUserJWT().isPresent() &&
-				!SecurityUtils.getCurrentUserJWT().get().replace(" ", "").isEmpty();
-	}
-	
+	/**
+	 * This is a bit misleading, it's not a uuid, but for the scope of this app it's sufficient. Shorter links are more
+	 * convenient to copy paste.
+	 *
+	 * @return
+	 */
 	private String randomUuid() {
 		return UUID.randomUUID().toString().substring(24, 36);
 		

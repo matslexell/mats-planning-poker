@@ -139,7 +139,6 @@ public class MeetingResourceIntTest {
         Meeting testMeeting = meetingList.get(meetingList.size() - 1);
         assertThat(testMeeting.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testMeeting.getUuid()).isEqualTo(DEFAULT_UUID);
-        assertThat(testMeeting.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
     }
 
     @Test
@@ -174,8 +173,7 @@ public class MeetingResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(meeting.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].uuid").value(hasItem(DEFAULT_UUID.toString())))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(DEFAULT_CREATED_DATE.toString())));
+            .andExpect(jsonPath("$.[*].uuid").value(hasItem(DEFAULT_UUID.toString())));
     }
     
     @Test
@@ -190,8 +188,7 @@ public class MeetingResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(meeting.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
-            .andExpect(jsonPath("$.uuid").value(DEFAULT_UUID.toString()))
-            .andExpect(jsonPath("$.createdDate").value(DEFAULT_CREATED_DATE.toString()));
+            .andExpect(jsonPath("$.uuid").value(DEFAULT_UUID.toString()));
     }
 
     @Test
@@ -231,7 +228,6 @@ public class MeetingResourceIntTest {
         Meeting testMeeting = meetingList.get(meetingList.size() - 1);
         assertThat(testMeeting.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testMeeting.getUuid()).isEqualTo(UPDATED_UUID);
-        assertThat(testMeeting.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
     }
 
     @Test

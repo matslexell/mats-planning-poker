@@ -1,8 +1,7 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router } from '@angular/router';
 import { Observable, Observer, Subscription } from 'rxjs';
 
-import { CSRFService } from '../auth/csrf.service';
 import { AuthServerProvider } from '../auth/auth-jwt.service';
 
 import * as SockJS from 'sockjs-client';
@@ -26,8 +25,7 @@ export class MeetingUpdateService {
         private authServerProvider: AuthServerProvider,
         private $window: WindowRef,
         private eventManager: JhiEventManager
-    ) // tslint:disable-next-line: no-unused-variable
-    {
+    ) {
         this.connection = this.createConnection();
         this.listener = this.createListener();
     }

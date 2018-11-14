@@ -125,7 +125,6 @@ public class ParticipantResourceIntTest {
         Participant testParticipant = participantList.get(participantList.size() - 1);
         assertThat(testParticipant.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testParticipant.getVote()).isEqualTo(DEFAULT_VOTE);
-        assertThat(testParticipant.getToken()).isEqualTo(DEFAULT_TOKEN);
     }
 
     @Test
@@ -160,8 +159,7 @@ public class ParticipantResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(participant.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].vote").value(hasItem(DEFAULT_VOTE.toString())))
-            .andExpect(jsonPath("$.[*].token").value(hasItem(DEFAULT_TOKEN.toString())));
+            .andExpect(jsonPath("$.[*].vote").value(hasItem(DEFAULT_VOTE.toString())));
     }
     
     @Test
@@ -176,8 +174,7 @@ public class ParticipantResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(participant.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
-            .andExpect(jsonPath("$.vote").value(DEFAULT_VOTE.toString()))
-            .andExpect(jsonPath("$.token").value(DEFAULT_TOKEN.toString()));
+            .andExpect(jsonPath("$.vote").value(DEFAULT_VOTE.toString()));
     }
 
     @Test
@@ -217,7 +214,6 @@ public class ParticipantResourceIntTest {
         Participant testParticipant = participantList.get(participantList.size() - 1);
         assertThat(testParticipant.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testParticipant.getVote()).isEqualTo(UPDATED_VOTE);
-        assertThat(testParticipant.getToken()).isEqualTo(UPDATED_TOKEN);
     }
 
     @Test

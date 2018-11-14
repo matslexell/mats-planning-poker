@@ -49,18 +49,10 @@ public class MeetingUpdateService implements ApplicationListener<SessionDisconne
     public void onApplicationEvent(SessionDisconnectEvent event) {
         log.debug("On Application event {}, meetingId : {}", event, sessionIdToMeetingUuidMap.get(event.getSessionId()));
         sessionIdToParticipantTokenMap.computeIfPresent(event.getSessionId(), (id, token) -> {
-            log.debug("In computeIfPresent sessionIdToParticipantTokenMap, participantId : {}", token);
-            log.debug("Part: {}", participantService.findByToken(token));
-    
             participantService.deleteByToken(token);
-            log.debug("Part after delete: {}", participantService.findByToken(token));
-    
-            log.debug("In computeIfPresent sessionIdToParticipantTokenMap, participantId : {}", token);
-    
             return null;
         });
         sessionIdToMeetingUuidMap.computeIfPresent(event.getSessionId(), (id, meetingUuid) -> {
-            log.debug("In computeIfPresent sessionIdToMeetingUuidMap, meetingId : {}", meetingUuid);
             messagingTemplate.convertAndSend("/meetingUpdate/client/" + meetingUuid, new ActivityDTO());
             return null;
         });
