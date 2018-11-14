@@ -6,15 +6,16 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import se.matslexell.matsplanningpoker.service.ParticipantService;
 import se.matslexell.matsplanningpoker.web.websocket.dto.ActivityDTO;
 
 import java.security.Principal;
 import java.time.Instant;
+import java.util.HashMap;
 
 import static se.matslexell.matsplanningpoker.config.WebsocketConfiguration.IP_ADDRESS;
 
@@ -24,29 +25,44 @@ public class MeetingUpdateService implements ApplicationListener<SessionDisconne
     private static final Logger log = LoggerFactory.getLogger(MeetingUpdateService.class);
 
     private final SimpMessageSendingOperations messagingTemplate;
+    
+    private final ParticipantService participantService;
+    
+    HashMap<String, String> sessionIdToMeetingUuidMap = new HashMap<>();
+    HashMap<String, String> sessionIdToParticipantJwtMap = new HashMap<>();
 
-    public MeetingUpdateService(SimpMessageSendingOperations messagingTemplate) {
+    public MeetingUpdateService(SimpMessageSendingOperations messagingTemplate, ParticipantService participantService) {
         this.messagingTemplate = messagingTemplate;
+        this.participantService = participantService;
     }
 
-    @MessageMapping("/meetingUpdate/server/{meetingUuid}")
-    public void sendActivity(@DestinationVariable String meetingUuid, @Payload ActivityDTO activityDTO, StompHeaderAccessor stompHeaderAccessor, Principal principal) throws InterruptedException {
-        activityDTO.setUserLogin(principal.getName());
-        activityDTO.setSessionId(stompHeaderAccessor.getSessionId());
-        activityDTO.setIpAddress(stompHeaderAccessor.getSessionAttributes().get(IP_ADDRESS).toString());
-        activityDTO.setTime(Instant.now());
-        log.debug("Sending user tracking data {}", activityDTO);
-        Thread.sleep(1000);
-        log.debug("Sending /meetingUpdate/client/" + meetingUuid);
-        messagingTemplate.convertAndSend("/meetingUpdate/client/" + meetingUuid, activityDTO);
+    @MessageMapping("/meetingUpdate/server/{meetingUuid}/{jwt}")
+    public void sendActivity(@DestinationVariable String meetingUuid, @DestinationVariable String jwt,
+                             StompHeaderAccessor stompHeaderAccessor) throws InterruptedException {
+        log.debug("Received activity with meetingId : {}, jwt : {}", meetingUuid, jwt);
+        sessionIdToMeetingUuidMap.put(stompHeaderAccessor.getSessionId(), meetingUuid);
+        sessionIdToParticipantJwtMap.put(stompHeaderAccessor.getSessionId(), jwt);
+        messagingTemplate.convertAndSend("/meetingUpdate/client/" + meetingUuid, new ActivityDTO());
     }
 
     @Override
     public void onApplicationEvent(SessionDisconnectEvent event) {
-        ActivityDTO activityDTO = new ActivityDTO();
-        activityDTO.setSessionId(event.getSessionId());
-        activityDTO.setPage("logout");
-        log.debug("On Application event {}", event);
-        messagingTemplate.convertAndSend("/meetingUpdate/client", activityDTO);
+        log.debug("On Application event {}, meetingId : {}", event, sessionIdToMeetingUuidMap.get(event.getSessionId()));
+        sessionIdToParticipantJwtMap.computeIfPresent(event.getSessionId(), (id, jwt) -> {
+            log.debug("In computeIfPresent sessionIdToParticipantJwtMap, participantId : {}", jwt);
+            log.debug("Part: {}", participantService.findByJwt(jwt));
+    
+            participantService.deleteByJwt(jwt);
+            log.debug("Part after delete: {}", participantService.findByJwt(jwt));
+    
+            log.debug("In computeIfPresent sessionIdToParticipantJwtMap, participantId : {}", jwt);
+    
+            return null;
+        });
+        sessionIdToMeetingUuidMap.computeIfPresent(event.getSessionId(), (id, meetingUuid) -> {
+            log.debug("In computeIfPresent sessionIdToMeetingUuidMap, meetingId : {}", meetingUuid);
+            messagingTemplate.convertAndSend("/meetingUpdate/client/" + meetingUuid, new ActivityDTO());
+            return null;
+        });
     }
 }

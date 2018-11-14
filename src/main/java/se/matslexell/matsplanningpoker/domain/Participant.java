@@ -35,7 +35,8 @@ public class Participant implements Serializable {
     @JsonIgnore
     private String jwt;
 
-    @ManyToOne    @JsonIgnoreProperties("participants")
+    @ManyToOne
+    @JsonIgnoreProperties("participants")
     private Meeting meeting;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

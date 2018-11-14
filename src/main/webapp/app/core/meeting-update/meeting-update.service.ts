@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Observable, Observer, Subscription } from 'rxjs';
 
@@ -8,6 +8,7 @@ import { AuthServerProvider } from '../auth/auth-jwt.service';
 import * as SockJS from 'sockjs-client';
 import * as Stomp from 'webstomp-client';
 import { WindowRef } from '../tracker/window.service';
+import { JhiEventManager } from 'ng-jhipster';
 
 @Injectable({ providedIn: 'root' })
 export class MeetingUpdateService {
@@ -24,14 +25,14 @@ export class MeetingUpdateService {
         private router: Router,
         private authServerProvider: AuthServerProvider,
         private $window: WindowRef,
-        // tslint:disable-next-line: no-unused-variable
-        private csrfService: CSRFService
-    ) {
+        private eventManager: JhiEventManager
+    ) // tslint:disable-next-line: no-unused-variable
+    {
         this.connection = this.createConnection();
         this.listener = this.createListener();
     }
 
-    connect(meetingUuid: String) {
+    connect(meetingUuid: String, token: String) {
         if (this.connectedPromise === null) {
             this.connection = this.createConnection();
         }
@@ -49,15 +50,7 @@ export class MeetingUpdateService {
         this.stompClient.connect(headers, () => {
             this.connectedPromise('success');
             this.connectedPromise = null;
-            this.sendActivity(meetingUuid);
-            if (!this.alreadyConnectedOnce) {
-                this.subscription = this.router.events.subscribe(event => {
-                    if (event instanceof NavigationEnd) {
-                        this.sendActivity(meetingUuid);
-                    }
-                });
-                this.alreadyConnectedOnce = true;
-            }
+            this.sendActivity(meetingUuid, token);
         });
     }
 
@@ -77,10 +70,10 @@ export class MeetingUpdateService {
         return this.listener;
     }
 
-    sendActivity(meetingUuid: String) {
+    sendActivity(meetingUuid: String, token: String) {
         if (this.stompClient !== null && this.stompClient.connected) {
             this.stompClient.send(
-                `/meetingUpdate/server/${meetingUuid}`, // destination
+                `/meetingUpdate/server/${meetingUuid}/${token}`, // destination
                 JSON.stringify({ page: this.router.routerState.snapshot.url }), // body
                 {} // header
             );
@@ -89,9 +82,8 @@ export class MeetingUpdateService {
 
     subscribe(meetingUuid: String) {
         this.connection.then(() => {
-            this.subscriber = this.stompClient.subscribe('/meetingUpdate/client/' + meetingUuid, data => {
-                console.log('RECEIVE');
-                this.listenerObserver.next(JSON.parse(data.body));
+            this.subscriber = this.stompClient.subscribe('/meetingUpdate/client/' + meetingUuid, () => {
+                this.eventManager.broadcast({ name: 'meetingUpdate', content: 'OK' });
             });
         });
     }

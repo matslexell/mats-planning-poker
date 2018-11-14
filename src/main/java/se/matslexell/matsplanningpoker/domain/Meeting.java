@@ -3,6 +3,8 @@ package se.matslexell.matsplanningpoker.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 
@@ -37,8 +39,9 @@ public class Meeting implements Serializable {
     @JsonIgnore
     private Instant createdDate;
 
-    @OneToMany(mappedBy = "meeting", cascade = {CascadeType.MERGE})
+    @OneToMany(mappedBy = "meeting", cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @NotFound(action= NotFoundAction.IGNORE)
     private Set<Participant> participants = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {

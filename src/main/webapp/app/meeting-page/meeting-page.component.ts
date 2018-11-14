@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Meeting } from 'app/shared/model/meeting.model';
@@ -8,19 +8,20 @@ import { ParticipantService } from 'app/entities/participant';
 import { LoginService, JhiTrackerService } from 'app/core';
 import { Participant } from 'app/shared/model/participant.model';
 import { MeetingUpdateService } from 'app/core/meeting-update/meeting-update.service';
+import { JhiEventManager } from 'ng-jhipster';
 
 @Component({
     selector: 'jhi-meeting-page',
     templateUrl: './meeting-page.component.html',
     styleUrls: ['meeting-page.scss']
 })
-export class MeetingPageComponent implements OnInit {
+export class MeetingPageComponent implements OnInit, OnDestroy {
     planningPokerValues = ['0', '1/2', '1', '2', '3', '5', '8', '13'];
 
     meeting: Meeting = {};
     url: String;
     myVote: String = '';
-    results: any;
+    results: { value: String; count: Number }[];
     token: String;
 
     constructor(
@@ -30,33 +31,30 @@ export class MeetingPageComponent implements OnInit {
         private meetingService: MeetingService,
         private participantService: ParticipantService,
         private meetingUpdateService: MeetingUpdateService,
-        private trackerService: JhiTrackerService
+        private eventManager: JhiEventManager
     ) {}
 
     public ngOnInit(): void {
-        // this.meeting = {
-        //     name: 'my meeting',
-        //     participants: [
-        //         { name: 'mats', vote: '1/2' },
-        //         { name: 'ida', vote: '5' },
-        //         { name: 'axel', vote: '5' },
-        //         { name: 'martin', vote: 'no vote' },
-        //         { name: 'robert', vote: '1' }
-        //     ],
-        //     uuid: '8kvg3mdslm3v'
-        // };
+        this.disconnect();
 
-        const meetingUuid = this.activatedRoute.snapshot.paramMap.get('meetingUuid');
+        this.meeting.uuid = this.activatedRoute.snapshot.paramMap.get('meetingUuid');
 
         this.activatedRoute.queryParams.subscribe(params => {
-            this.meetingService.joinMeeting(meetingUuid, params.participantName).subscribe(jwt => {
+            this.meetingService.joinMeeting(this.meeting.uuid, params.participantName).subscribe(jwt => {
                 console.log('JWT FROM SERVER', jwt);
                 this.token = jwt;
-                this.update(meetingUuid);
+                this.update();
+                this.connect(this.meeting.uuid, this.token);
             });
             this.location.go(this.getLocationWithoutParams()); // Set url without rerouting
             this.url = window.location.href;
         });
+    }
+
+    public ngOnDestroy(): void {
+        console.log('disconnect from group');
+        this.meetingUpdateService.unsubscribe();
+        this.meetingUpdateService.disconnect();
     }
 
     private calculateResult(meeting: Meeting, planningPokerValues: String[]): { value: String; count: Number }[] {
@@ -71,26 +69,35 @@ export class MeetingPageComponent implements OnInit {
         return results.concat({ value: 'No vote', count: noVoteCount });
     }
 
-    public update(meetingUuid: string): void {
-        this.meetingService.getByUuid(meetingUuid).subscribe(data => {
+    public update(): void {
+        this.meetingService.getByUuid(this.meeting.uuid).subscribe(data => {
             console.log('Meeting loaded by uuid', data.body);
             this.meeting = data.body;
             this.results = this.calculateResult(this.meeting, this.planningPokerValues);
         });
     }
 
-    public connect() {
-        this.meetingUpdateService.connect(this.meeting.uuid);
-        this.meetingUpdateService.subscribe(this.meeting.uuid);
-        // this.trackerService.connect();
-        // this.trackerService.subscribe();
+    public connect(meetingUuid: String, token: String) {
+        this.meetingUpdateService.connect(meetingUuid, token);
+        this.meetingUpdateService.subscribe(meetingUuid);
+        this.eventManager.subscribe('meetingUpdate', response => {
+            this.update();
+        });
+    }
+
+    public disconnect() {
+        this.meetingUpdateService.unsubscribe();
+        this.meetingUpdateService.disconnect();
+    }
+
+    public sendActivity() {
+        this.meetingUpdateService.sendActivity(this.meeting.uuid, this.token);
     }
 
     public submitVote() {
         console.log('submitVote', this.myVote);
         this.participantService.updateFromVote(this.myVote, this.token).subscribe(data => {
-            console.log('UPDATE PARTICIPANT', data);
-            this.update(this.meeting.uuid); // todo necessary when websocket is in place?
+            this.sendActivity();
         });
     }
 
