@@ -29,7 +29,7 @@
                 <constraints nullable="true" />
             </column>
 
-            <column name="jwt" type="varchar(255)">
+            <column name="token" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
 

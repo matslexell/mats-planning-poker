@@ -91,7 +91,6 @@ public class MeetingResource {
 	/**
 	 * POST  /meetings : Create a new meeting.
 	 *
-	 * @param meetingDTO the meetingDTO to create
 	 * @return the ResponseEntity with status 201 (Created) and with body the new meetingDTO, or with status 400 (Bad
 	 * Request) if the meeting has already an ID
 	 * @throws URISyntaxException if the Location URI syntax is incorrect
@@ -149,7 +148,7 @@ public class MeetingResource {
 		Participant participant = participantService.createAndSaveNewParticipant(participantName);
 		meetingService.addParticipantToMeeting(participant, meetingUuid);
 		
-		return new ResponseEntity<>(mapper.writeValueAsString(participant.getJwt()), HttpStatus.OK);
+		return new ResponseEntity<>(mapper.writeValueAsString(participant.getToken()), HttpStatus.OK);
 	}
 	
 	/**

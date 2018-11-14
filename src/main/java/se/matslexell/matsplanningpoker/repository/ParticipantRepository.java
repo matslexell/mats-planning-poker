@@ -16,11 +16,11 @@ import java.util.Optional;
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Long> {
 	
-	void deleteByJwt(String jwt);
+	void deleteByToken(String token);
 	
-	Optional<Participant> findByJwt(String jwt);
+	Optional<Participant> findByToken(String token);
 	
-	@Query("select participant.jwt from Participant participant where participant.id = :id")
-	Optional<String> findJwtFromParticipantId(@Param("id") Long id);
+	@Query("select participant.token from Participant participant where participant.id = :id")
+	Optional<String> findTokenFromParticipantId(@Param("id") Long id);
 	
 }

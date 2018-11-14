@@ -29,33 +29,33 @@ public class MeetingUpdateService implements ApplicationListener<SessionDisconne
     private final ParticipantService participantService;
     
     HashMap<String, String> sessionIdToMeetingUuidMap = new HashMap<>();
-    HashMap<String, String> sessionIdToParticipantJwtMap = new HashMap<>();
+    HashMap<String, String> sessionIdToParticipantTokenMap = new HashMap<>();
 
     public MeetingUpdateService(SimpMessageSendingOperations messagingTemplate, ParticipantService participantService) {
         this.messagingTemplate = messagingTemplate;
         this.participantService = participantService;
     }
 
-    @MessageMapping("/meetingUpdate/server/{meetingUuid}/{jwt}")
-    public void sendActivity(@DestinationVariable String meetingUuid, @DestinationVariable String jwt,
+    @MessageMapping("/meetingUpdate/server/{meetingUuid}/{token}")
+    public void sendActivity(@DestinationVariable String meetingUuid, @DestinationVariable String token,
                              StompHeaderAccessor stompHeaderAccessor) throws InterruptedException {
-        log.debug("Received activity with meetingId : {}, jwt : {}", meetingUuid, jwt);
+        log.debug("Received activity with meetingId : {}, token : {}", meetingUuid, token);
         sessionIdToMeetingUuidMap.put(stompHeaderAccessor.getSessionId(), meetingUuid);
-        sessionIdToParticipantJwtMap.put(stompHeaderAccessor.getSessionId(), jwt);
+        sessionIdToParticipantTokenMap.put(stompHeaderAccessor.getSessionId(), token);
         messagingTemplate.convertAndSend("/meetingUpdate/client/" + meetingUuid, new ActivityDTO());
     }
 
     @Override
     public void onApplicationEvent(SessionDisconnectEvent event) {
         log.debug("On Application event {}, meetingId : {}", event, sessionIdToMeetingUuidMap.get(event.getSessionId()));
-        sessionIdToParticipantJwtMap.computeIfPresent(event.getSessionId(), (id, jwt) -> {
-            log.debug("In computeIfPresent sessionIdToParticipantJwtMap, participantId : {}", jwt);
-            log.debug("Part: {}", participantService.findByJwt(jwt));
+        sessionIdToParticipantTokenMap.computeIfPresent(event.getSessionId(), (id, token) -> {
+            log.debug("In computeIfPresent sessionIdToParticipantTokenMap, participantId : {}", token);
+            log.debug("Part: {}", participantService.findByToken(token));
     
-            participantService.deleteByJwt(jwt);
-            log.debug("Part after delete: {}", participantService.findByJwt(jwt));
+            participantService.deleteByToken(token);
+            log.debug("Part after delete: {}", participantService.findByToken(token));
     
-            log.debug("In computeIfPresent sessionIdToParticipantJwtMap, participantId : {}", jwt);
+            log.debug("In computeIfPresent sessionIdToParticipantTokenMap, participantId : {}", token);
     
             return null;
         });

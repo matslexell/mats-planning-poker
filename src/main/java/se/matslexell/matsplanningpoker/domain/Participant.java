@@ -31,9 +31,9 @@ public class Participant implements Serializable {
     @Column(name = "vote")
     private String vote;
 
-    @Column(name = "jwt")
+    @Column(name = "token")
     @JsonIgnore
-    private String jwt;
+    private String token;
 
     @ManyToOne
     @JsonIgnoreProperties("participants")
@@ -74,17 +74,17 @@ public class Participant implements Serializable {
         this.vote = vote;
     }
 
-    public String getJwt() {
-        return jwt;
+    public String getToken() {
+        return token;
     }
 
-    public Participant jwt(String jwt) {
-        this.jwt = jwt;
+    public Participant token(String token) {
+        this.token = token;
         return this;
     }
 
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public Meeting getMeeting() {
@@ -127,7 +127,7 @@ public class Participant implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", vote='" + getVote() + "'" +
-            ", jwt='" + getJwt() + "'" +
+            ", token='" + getToken() + "'" +
             "}";
     }
 }

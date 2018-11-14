@@ -85,7 +85,6 @@ public class ParticipantResource {
     /**
      * PUT  /participants : Updates an existing participant.
      *
-     * @param participantDTO the participantDTO to update
      * @return the ResponseEntity with status 200 (OK) and with body the updated participantDTO,
      * or with status 400 (Bad Request) if the participantDTO is not valid,
      * or with status 500 (Internal Server Error) if the participantDTO couldn't be updated
@@ -95,11 +94,11 @@ public class ParticipantResource {
     @Timed
     public ResponseEntity<ParticipantDTO> updateParticipantFromVote(@RequestParam(value = "vote") String vote, @RequestParam(value = "token") String token) throws URISyntaxException {
         
-        if (!participantService.existsByJwt(token)) {
+        if (!participantService.existsByToken(token)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     
-        ParticipantDTO participantDTO = participantService.findByJwt(token).get();
+        ParticipantDTO participantDTO = participantService.findByToken(token).get();
         participantDTO.setVote(vote);
         
         return updateParticipant(participantDTO);

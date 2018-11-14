@@ -43,7 +43,7 @@ public class ParticipantService {
         log.debug("Request to save Participant : {}", participantDTO);
         Participant participant = participantMapper.toEntity(participantDTO);
         
-        participant.setJwt(participantRepository.findJwtFromParticipantId(participant.getId()).orElse(generateJwt()));
+        participant.setToken(participantRepository.findTokenFromParticipantId(participant.getId()).orElse(generateToken()));
         
         participant = participantRepository.save(participant);
         return participantMapper.toDto(participant);
@@ -86,31 +86,31 @@ public class ParticipantService {
         participantRepository.deleteById(id);
     }
 	
-	public boolean existsByMeetingUuidAndParticipantJwt(String meetingUuid, String jwt) {
+	public boolean existsByMeetingUuidAndParticipantToken(String meetingUuid, String token) {
         return false;
 	}
     
-    public void deleteByJwt(String jwt) {
-        participantRepository.deleteByJwt(jwt);
+    public void deleteByToken(String token) {
+        participantRepository.deleteByToken(token);
     }
     
     public Participant createAndSaveNewParticipant(String name) {
         log.debug("Request to create and save new participant with name : {}", name);
-        Participant participant = new Participant().jwt(generateJwt()).name(name);
+        Participant participant = new Participant().token(generateToken()).name(name);
         return participantRepository.save(participant);
     }
 	
-	public Optional<ParticipantDTO> findByJwt(String jwt) {
-        log.debug("Request to get Participant by jwt : {}", jwt);
-        return participantRepository.findByJwt(jwt)
+	public Optional<ParticipantDTO> findByToken(String token) {
+        log.debug("Request to get Participant by token : {}", token);
+        return participantRepository.findByToken(token)
                 .map(participantMapper::toDto);
 	}
 	
-	public boolean existsByJwt(String jwt) {
-        return participantRepository.findByJwt(jwt).isPresent();
+	public boolean existsByToken(String token) {
+        return participantRepository.findByToken(token).isPresent();
 	}
     
-    private String generateJwt() {
+    private String generateToken() {
         return UUID.randomUUID().toString();
     }
 }

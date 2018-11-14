@@ -49,8 +49,8 @@ public class ParticipantResourceIntTest {
     private static final String DEFAULT_VOTE = "AAAAAAAAAA";
     private static final String UPDATED_VOTE = "BBBBBBBBBB";
 
-    private static final String DEFAULT_JWT = "AAAAAAAAAA";
-    private static final String UPDATED_JWT = "BBBBBBBBBB";
+    private static final String DEFAULT_TOKEN = "AAAAAAAAAA";
+    private static final String UPDATED_TOKEN = "BBBBBBBBBB";
 
     @Autowired
     private ParticipantRepository participantRepository;
@@ -98,7 +98,7 @@ public class ParticipantResourceIntTest {
         Participant participant = new Participant()
             .name(DEFAULT_NAME)
             .vote(DEFAULT_VOTE)
-            .jwt(DEFAULT_JWT);
+            .token(DEFAULT_TOKEN);
         return participant;
     }
 
@@ -125,7 +125,7 @@ public class ParticipantResourceIntTest {
         Participant testParticipant = participantList.get(participantList.size() - 1);
         assertThat(testParticipant.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testParticipant.getVote()).isEqualTo(DEFAULT_VOTE);
-        assertThat(testParticipant.getJwt()).isEqualTo(DEFAULT_JWT);
+        assertThat(testParticipant.getToken()).isEqualTo(DEFAULT_TOKEN);
     }
 
     @Test
@@ -161,7 +161,7 @@ public class ParticipantResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(participant.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].vote").value(hasItem(DEFAULT_VOTE.toString())))
-            .andExpect(jsonPath("$.[*].jwt").value(hasItem(DEFAULT_JWT.toString())));
+            .andExpect(jsonPath("$.[*].token").value(hasItem(DEFAULT_TOKEN.toString())));
     }
     
     @Test
@@ -177,7 +177,7 @@ public class ParticipantResourceIntTest {
             .andExpect(jsonPath("$.id").value(participant.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.vote").value(DEFAULT_VOTE.toString()))
-            .andExpect(jsonPath("$.jwt").value(DEFAULT_JWT.toString()));
+            .andExpect(jsonPath("$.token").value(DEFAULT_TOKEN.toString()));
     }
 
     @Test
@@ -203,7 +203,7 @@ public class ParticipantResourceIntTest {
         updatedParticipant
             .name(UPDATED_NAME)
             .vote(UPDATED_VOTE)
-            .jwt(UPDATED_JWT);
+            .token(UPDATED_TOKEN);
         ParticipantDTO participantDTO = participantMapper.toDto(updatedParticipant);
 
         restParticipantMockMvc.perform(put("/api/participants")
@@ -217,7 +217,7 @@ public class ParticipantResourceIntTest {
         Participant testParticipant = participantList.get(participantList.size() - 1);
         assertThat(testParticipant.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testParticipant.getVote()).isEqualTo(UPDATED_VOTE);
-        assertThat(testParticipant.getJwt()).isEqualTo(UPDATED_JWT);
+        assertThat(testParticipant.getToken()).isEqualTo(UPDATED_TOKEN);
     }
 
     @Test
@@ -297,13 +297,13 @@ public class ParticipantResourceIntTest {
     
     @Test
     @Transactional
-    public void testFindJwtFromId() {
+    public void testFindTokenFromId() {
         Participant participant = ParticipantResourceIntTest.createEntity(em);
-        participant.setJwt("123");
+        participant.setToken("123");
         participant = participantRepository.save(participant);
         
-        assertEquals(participantRepository.findJwtFromParticipantId(participant.getId()).get(), "123");
-        assertEquals(participantRepository.findJwtFromParticipantId(5467346l).isPresent(), false);
+        assertEquals(participantRepository.findTokenFromParticipantId(participant.getId()).get(), "123");
+        assertEquals(participantRepository.findTokenFromParticipantId(5467346l).isPresent(), false);
     
     }
     

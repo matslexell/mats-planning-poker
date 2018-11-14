@@ -10,7 +10,7 @@
             "fieldType": "String"
         },
         {
-            "fieldName": "jwt",
+            "fieldName": "token",
             "fieldType": "String"
         }
     ],

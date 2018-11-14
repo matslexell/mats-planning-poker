@@ -16,7 +16,7 @@ public interface ParticipantMapper extends EntityMapper<ParticipantDTO, Particip
     ParticipantDTO toDto(Participant participant);
 
     @Mapping(source = "meetingId", target = "meeting")
-    @Mapping(target = "jwt", ignore = true)
+    @Mapping(target = "token", ignore = true)
     Participant toEntity(ParticipantDTO participantDTO);
 
     default Participant fromId(Long id) {

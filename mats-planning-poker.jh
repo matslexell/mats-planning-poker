@@ -7,7 +7,7 @@ entity Meeting {
 entity Participant {
     name String,
     vote String,
-    jwt String
+    token String
 }
 
 relationship OneToMany {

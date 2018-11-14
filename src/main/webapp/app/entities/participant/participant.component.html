@@ -17,7 +17,7 @@
             <th jhiSortBy="id"><span>ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="name"><span>Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="vote"><span>Vote</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="jwt"><span>Jwt</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="token"><span>Token</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="meetingName"><span>Meeting</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
@@ -27,7 +27,7 @@
                 <td><a [routerLink]="['/participant', participant.id, 'view' ]">{{participant.id}}</a></td>
                 <td>{{participant.name}}</td>
                 <td>{{participant.vote}}</td>
-                <td>{{participant.jwt}}</td>
+                <td>{{participant.token}}</td>
                 <td>
                     <div *ngIf="participant.meetingId">
                         <a [routerLink]="['../meeting', participant.meetingId , 'view' ]" >{{participant.meetingName}}</a>
