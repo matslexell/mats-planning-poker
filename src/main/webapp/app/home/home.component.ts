@@ -6,7 +6,7 @@ import { LoginModalService, Principal, Account } from 'app/core';
 import { Meeting } from 'app/shared/model/meeting.model';
 import { Participant } from 'app/shared/model/participant.model';
 import { Router } from '@angular/router';
-import { meetingPageRoute } from 'app/meeting-page';
+import { MeetingService } from 'app/entities/meeting';
 
 @Component({
     selector: 'jhi-home',
@@ -26,7 +26,8 @@ export class HomeComponent implements OnInit {
         private principal: Principal,
         private loginModalService: LoginModalService,
         private eventManager: JhiEventManager,
-        private router: Router
+        private router: Router,
+        private meetingService: MeetingService
     ) {}
 
     ngOnInit() {
@@ -55,8 +56,10 @@ export class HomeComponent implements OnInit {
     createMeeting() {
         console.log('createMeeting', this.newMeeting, this.creatorParticipant);
         this.newMeeting.uuid = 'abc123'; // Todo, create meeting
-        this.router.navigate(['/planningPokerMeeting/' + this.newMeeting.uuid], {
-            queryParams: { participantName: this.creatorParticipant.name }
+        this.meetingService.createFromName(this.newMeeting.name).subscribe(meeting => {
+            this.router.navigate(['/planningPokerMeeting/' + meeting.uuid], {
+                queryParams: { participantName: this.creatorParticipant.name }
+            });
         });
     }
 

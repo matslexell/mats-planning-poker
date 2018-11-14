@@ -23,6 +23,10 @@ export class ParticipantService {
         return this.http.put<IParticipant>(this.resourceUrl, participant, { observe: 'response' });
     }
 
+    updateFromVote(vote: String, token: String): Observable<any> {
+        return this.http.put(`${this.resourceUrl}/vote?vote=${vote}&token=${token}`, { observe: 'response' });
+    }
+
     find(id: number): Observable<EntityResponseType> {
         return this.http.get<IParticipant>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }

@@ -34,6 +34,7 @@ public class Meeting implements Serializable {
     private String uuid;
 
     @Column(name = "created_date")
+    @JsonIgnore
     private Instant createdDate;
 
     @OneToMany(mappedBy = "meeting", cascade = {CascadeType.MERGE})

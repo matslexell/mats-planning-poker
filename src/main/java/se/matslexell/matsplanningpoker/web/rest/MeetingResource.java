@@ -1,6 +1,8 @@
 package se.matslexell.matsplanningpoker.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -55,6 +57,7 @@ public class MeetingResource {
 	
 	private UserDetailsService userDetailsService;
 	
+	private final ObjectMapper mapper = new ObjectMapper();
 	
 	public MeetingResource(MeetingService meetingService, ParticipantService participantService, TokenProvider tokenProvider, UserDetailsService userDetailsService) {
 		this.participantService = participantService;
@@ -78,10 +81,29 @@ public class MeetingResource {
 		if (meetingDTO.getId() != null) {
 			throw new BadRequestAlertException("A new meeting cannot already have an ID", ENTITY_NAME, "idexists");
 		}
+		
 		MeetingDTO result = meetingService.save(meetingDTO);
 		return ResponseEntity.created(new URI("/api/meetings/" + result.getId()))
 				.headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
 				.body(result);
+	}
+	
+	/**
+	 * POST  /meetings : Create a new meeting.
+	 *
+	 * @param meetingDTO the meetingDTO to create
+	 * @return the ResponseEntity with status 201 (Created) and with body the new meetingDTO, or with status 400 (Bad
+	 * Request) if the meeting has already an ID
+	 * @throws URISyntaxException if the Location URI syntax is incorrect
+	 */
+	@PostMapping("/meetings/fromName")
+	@Timed
+	public ResponseEntity<MeetingDTO> createMeetingFromName(@RequestParam(value = "name") String name) throws URISyntaxException {
+		log.debug("REST request to save from name Meeting : {}", name);
+		MeetingDTO meetingDTO = new MeetingDTO();
+		meetingDTO.setName(name);
+		meetingDTO.setUuid(randomUuid());
+		return createMeeting(meetingDTO);
 	}
 	
 	/**
@@ -109,7 +131,6 @@ public class MeetingResource {
 	/**
 	 * PUT  /meetings : Updates an existing meeting.
 	 *
-	 * @param meetingDTO the meetingDTO to update
 	 * @return the ResponseEntity with status 200 (OK) and with body the updated meetingDTO, or with status 400 (Bad
 	 * Request) if the meetingDTO is not valid, or with status 500 (Internal Server Error) if the meetingDTO couldn't be
 	 * updated
@@ -117,32 +138,18 @@ public class MeetingResource {
 	 */
 	@PutMapping("/meetings/join/{meetingUuid}/{participantName}")
 	@Timed
-	public ResponseEntity<UserJWTController.JWTToken> joinMeeting(@PathVariable String meetingUuid, @PathVariable String participantName) throws URISyntaxException {
+	public ResponseEntity<String> joinMeeting(@PathVariable String meetingUuid, @PathVariable String participantName) throws URISyntaxException, JsonProcessingException {
 		log.debug("REST request to join meeting : {}, participantName : {}", meetingUuid, participantName);
 		
 		if (!meetingService.existsByMeetingUuid(meetingUuid)) {
+			log.error("No meeting exists by meetingUuid : " + meetingUuid);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
-		log.debug("USERLOGIN is: " + SecurityUtils.getCurrentUserLogin());
-		
-		if (jwtIsPresentAndNonEmpty()) {
-			log.debug("JWT is: " + SecurityUtils.getCurrentUserJWT().get());
-			
-			// Participant is already a member of the group. He/she is probably only trying to return to the site.
-			if (participantService.existsByMeetingUuidAndParticipantJwt(meetingUuid, SecurityUtils.getCurrentUserJWT().get())) {
-				return responseEntityFromJwt(SecurityUtils.getCurrentUserJWT().get());
-			} else {
-				// Else delete the participant from any group and enter this one
-				participantService.deleteByJwt(SecurityUtils.getCurrentUserJWT().get());
-			}
-		}
-		
-		String jwt = generateJwt();
-		
-		Participant participant = participantService.createAndSaveNewParticipant(participantName, jwt);
+		Participant participant = participantService.createAndSaveNewParticipant(participantName);
 		meetingService.addParticipantToMeeting(participant, meetingUuid);
-		return responseEntityFromJwt(jwt);
+		
+		return new ResponseEntity<>(mapper.writeValueAsString(participant.getJwt()), HttpStatus.OK);
 	}
 	
 	/**
@@ -177,13 +184,11 @@ public class MeetingResource {
 	/**
 	 * GET  /meetings/:id : get the "id" meeting.
 	 *
-	 * @param id the id of the meetingDTO to retrieve
 	 * @return the ResponseEntity with status 200 (OK) and with body the meetingDTO, or with status 404 (Not Found)
 	 */
 	@GetMapping("/meetings/uuid/{uuid}")
 	@Timed
 	public ResponseEntity<MeetingDTO> getMeetingFromUuid(@PathVariable String uuid) {
-		log.debug("REST request to get Meeting with uuid : {}", uuid);
 		Optional<MeetingDTO> meetingDTO = meetingService.findByUuid(uuid);
 		return ResponseUtil.wrapOrNotFound(meetingDTO);
 	}
@@ -202,19 +207,6 @@ public class MeetingResource {
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
 	}
 	
-	private String generateJwt() {
-		String principal = "user";
-		
-		UserDetails studentDetails = userDetailsService.loadUserByUsername(principal);
-		
-		Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null, studentDetails.getAuthorities());
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		
-		String jwt = tokenProvider.createToken(authentication, false);
-		
-		return jwt;
-	}
-	
 	private ResponseEntity<UserJWTController.JWTToken> responseEntityFromJwt(String jwt) {
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
@@ -225,5 +217,20 @@ public class MeetingResource {
 	private boolean jwtIsPresentAndNonEmpty() {
 		return SecurityUtils.getCurrentUserJWT().isPresent() &&
 				!SecurityUtils.getCurrentUserJWT().get().replace(" ", "").isEmpty();
+	}
+	
+	private String randomUuid() {
+		return UUID.randomUUID().toString().substring(24, 36);
+		
+		// Create a pretty link like at goo.gl or bitly:
+//		IntStream intStream = concat(range(65, 90+1), concat(range(97, 122+1), range(48, 57+1)));
+//		int[] array = intStream.toArray();
+//
+//		StringBuilder stringBuilder = new StringBuilder();
+//
+//		for (int i = 0; i < 8; i++) {
+//			stringBuilder.append((char) array[(int) (Math.random() * array.length)]);
+//		}
+//		return stringBuilder.toString();
 	}
 }

@@ -1,5 +1,6 @@
 package se.matslexell.matsplanningpoker.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -31,6 +32,7 @@ public class Participant implements Serializable {
     private String vote;
 
     @Column(name = "jwt")
+    @JsonIgnore
     private String jwt;
 
     @ManyToOne    @JsonIgnoreProperties("participants")

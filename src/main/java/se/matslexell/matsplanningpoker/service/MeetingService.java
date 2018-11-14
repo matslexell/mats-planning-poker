@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -42,6 +43,7 @@ public class MeetingService {
     public MeetingDTO save(MeetingDTO meetingDTO) {
         log.debug("Request to save Meeting : {}", meetingDTO);
         Meeting meeting = meetingMapper.toEntity(meetingDTO);
+        meeting.createdDate(meetingRepository.findCreatedDateFromMeetingId(meeting.getId()).orElse(Instant.now()));
         meeting = meetingRepository.save(meeting);
         return meetingMapper.toDto(meeting);
     }
@@ -83,8 +85,7 @@ public class MeetingService {
         meetingRepository.deleteById(id);
     }
 	
-    @Transactional
-	public void addParticipantToMeeting(Participant participant, String meetingUuid) {
+	public void addParticipantToMeeting(Participant participant, String meetingUuid) { // TODO
 		log.debug("Request to add Participant : {}, to Meeting with uuid : {}", participant, meetingUuid);
 	
 		Optional<Meeting> meetingOptional = meetingRepository.findByUuid(meetingUuid);
@@ -93,6 +94,7 @@ public class MeetingService {
         }
         
         meetingOptional.get().addParticipant(participant);
+        meetingRepository.save(meetingOptional.get());
 	}
     
     public boolean existsByMeetingUuid(String meetingUuid) {

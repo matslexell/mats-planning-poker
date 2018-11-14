@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service Implementation for managing Participant.
@@ -41,6 +42,9 @@ public class ParticipantService {
     public ParticipantDTO save(ParticipantDTO participantDTO) {
         log.debug("Request to save Participant : {}", participantDTO);
         Participant participant = participantMapper.toEntity(participantDTO);
+        
+        participant.setJwt(participantRepository.findJwtFromParticipantId(participant.getId()).orElse(generateJwt()));
+        
         participant = participantRepository.save(participant);
         return participantMapper.toDto(participant);
     }
@@ -90,9 +94,23 @@ public class ParticipantService {
         participantRepository.deleteByJwt(jwt);
     }
     
-    public Participant createAndSaveNewParticipant(String name, String jwt) { // TODO implement
-        log.debug("Request to create and save new participant with name : {}, jwt : {}", name, jwt);
-        Participant participant = new Participant().jwt(jwt).name(name);
+    public Participant createAndSaveNewParticipant(String name) {
+        log.debug("Request to create and save new participant with name : {}", name);
+        Participant participant = new Participant().jwt(generateJwt()).name(name);
         return participantRepository.save(participant);
+    }
+	
+	public Optional<ParticipantDTO> findByJwt(String jwt) {
+        log.debug("Request to get Participant by jwt : {}", jwt);
+        return participantRepository.findByJwt(jwt)
+                .map(participantMapper::toDto);
+	}
+	
+	public boolean existsByJwt(String jwt) {
+        return participantRepository.findByJwt(jwt).isPresent();
+	}
+    
+    private String generateJwt() {
+        return UUID.randomUUID().toString();
     }
 }

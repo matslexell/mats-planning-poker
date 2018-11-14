@@ -32,6 +32,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 
+import static org.junit.Assert.assertEquals;
 import static se.matslexell.matsplanningpoker.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -306,5 +307,16 @@ public class MeetingResourceIntTest {
     public void testEntityFromId() {
         assertThat(meetingMapper.fromId(42L).getId()).isEqualTo(42);
         assertThat(meetingMapper.fromId(null)).isNull();
+    }
+    
+    @Test
+    @Transactional
+    public void testFindCreatedDateFromMeetingId() {
+        Instant time = Instant.ofEpochMilli(24601);
+        Meeting meeting = MeetingResourceIntTest.createEntity(em).createdDate(time);
+        meeting = meetingRepository.save(meeting);
+    
+        assertEquals(meetingRepository.findCreatedDateFromMeetingId(meeting.getId()).get(), time);
+        assertEquals(meetingRepository.findCreatedDateFromMeetingId(5467346l).isPresent(), false);
     }
 }

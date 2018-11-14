@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 
+import static org.junit.Assert.assertEquals;
 import static se.matslexell.matsplanningpoker.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -293,4 +294,17 @@ public class ParticipantResourceIntTest {
         assertThat(participantMapper.fromId(42L).getId()).isEqualTo(42);
         assertThat(participantMapper.fromId(null)).isNull();
     }
+    
+    @Test
+    @Transactional
+    public void testFindJwtFromId() {
+        Participant participant = ParticipantResourceIntTest.createEntity(em);
+        participant.setJwt("123");
+        participant = participantRepository.save(participant);
+        
+        assertEquals(participantRepository.findJwtFromParticipantId(participant.getId()).get(), "123");
+        assertEquals(participantRepository.findJwtFromParticipantId(5467346l).isPresent(), false);
+    
+    }
+    
 }

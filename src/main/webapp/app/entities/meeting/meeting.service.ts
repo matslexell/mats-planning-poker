@@ -25,6 +25,10 @@ export class MeetingService {
             .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
     }
 
+    createFromName(name: String): Observable<any> {
+        return this.http.post(`${this.resourceUrl}/fromName?name=${name}`, { observe: 'response' });
+    }
+
     update(meeting: IMeeting): Observable<EntityResponseType> {
         const copy = this.convertDateFromClient(meeting);
         return this.http

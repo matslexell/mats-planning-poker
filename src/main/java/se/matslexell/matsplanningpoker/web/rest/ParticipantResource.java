@@ -1,6 +1,7 @@
 package se.matslexell.matsplanningpoker.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import se.matslexell.matsplanningpoker.security.SecurityUtils;
 import se.matslexell.matsplanningpoker.service.ParticipantService;
 import se.matslexell.matsplanningpoker.web.rest.errors.BadRequestAlertException;
 import se.matslexell.matsplanningpoker.web.rest.util.HeaderUtil;
@@ -79,6 +80,29 @@ public class ParticipantResource {
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, participantDTO.getId().toString()))
             .body(result);
+    }
+    
+    /**
+     * PUT  /participants : Updates an existing participant.
+     *
+     * @param participantDTO the participantDTO to update
+     * @return the ResponseEntity with status 200 (OK) and with body the updated participantDTO,
+     * or with status 400 (Bad Request) if the participantDTO is not valid,
+     * or with status 500 (Internal Server Error) if the participantDTO couldn't be updated
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @PutMapping("/participants/vote")
+    @Timed
+    public ResponseEntity<ParticipantDTO> updateParticipantFromVote(@RequestParam(value = "vote") String vote, @RequestParam(value = "token") String token) throws URISyntaxException {
+        
+        if (!participantService.existsByJwt(token)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    
+        ParticipantDTO participantDTO = participantService.findByJwt(token).get();
+        participantDTO.setVote(vote);
+        
+        return updateParticipant(participantDTO);
     }
 
     /**
