@@ -132,7 +132,21 @@ public class ParticipantResource {
         Optional<ParticipantDTO> participantDTO = participantService.findOne(id);
         return ResponseUtil.wrapOrNotFound(participantDTO);
     }
-
+    
+    /**
+     * GET  /participants/:id : get the "token" participant.
+     *
+     * @param id the id of the participantDTO to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the participantDTO, or with status 404 (Not Found)
+     */
+    @GetMapping("/participants/token/{token}")
+    @Timed
+    public ResponseEntity<ParticipantDTO> getParticipant(@PathVariable String token) {
+        log.debug("REST request to get Participant by token : {}", token);
+        Optional<ParticipantDTO> participantDTO = participantService.findByToken(token);
+        return ResponseUtil.wrapOrNotFound(participantDTO);
+    }
+    
     /**
      * DELETE  /participants/:id : delete the "id" participant.
      *

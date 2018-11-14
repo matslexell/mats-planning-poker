@@ -42,13 +42,16 @@ public class ParticipantService {
     public ParticipantDTO save(ParticipantDTO participantDTO) {
         log.debug("Request to save Participant : {}", participantDTO);
         Participant participant = participantMapper.toEntity(participantDTO);
+        if(participant.getName() == null || participant.getName().isEmpty()) {
+            participant.setName(generateName());
+        }
         
         participant.setToken(participantRepository.findTokenFromParticipantId(participant.getId()).orElse(generateToken()));
         
         participant = participantRepository.save(participant);
         return participantMapper.toDto(participant);
     }
-
+    
     /**
      * Get all the participants.
      *
@@ -98,7 +101,8 @@ public class ParticipantService {
     }
 	
 	public Optional<ParticipantDTO> findByToken(String token) {
-        log.debug("Request to get Participant by token : {}", token);
+        log.debug("" +
+                "n : {}", token);
         return participantRepository.findByToken(token)
                 .map(participantMapper::toDto);
 	}
@@ -110,5 +114,13 @@ public class ParticipantService {
     
     private String generateToken() {
         return UUID.randomUUID().toString();
+    }
+    
+    private String generateName() {
+        String[] colors = {"red", "orange", "yellow", "green", "blue", "purple", "white", "black", "brown", "gray"};
+        String[] animals = {"rabbit", "bear", "dog", "cat", "dragon", "horse", "dragon", "bird", "moose", "lion", "elephant", "fish", "shark"};
+        
+        String name = "The " + colors[(int)(Math.random() * colors.length)] + " " +  animals[(int)(Math.random() * animals.length)];
+        return name;
     }
 }

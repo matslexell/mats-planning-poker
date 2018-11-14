@@ -21,8 +21,8 @@
                     </small>
                 </div>
                 <br>
-                <input type="text" class="form-control" id="participantName" name="participantName" placeholder="Your name (optional)"
-                    [(ngModel)]="creatorParticipant.name" #participantNameInput="ngModel">
+                <!-- <input type="text" class="form-control" id="participantName" name="participantName" placeholder="Your name (optional)"
+                    [(ngModel)]="creatorParticipant.name" #participantNameInput="ngModel"> -->
             </div>
             <button type="submit" [disabled]="createMeetingForm.form.invalid" class="btn btn-primary">Create meeting</button>
         </form>
@@ -45,8 +45,8 @@
                     </small>
                 </div>
                 <br>
-                <input type="text" class="form-control" id="participantName" name="participantName" placeholder="Your name (optional)"
-                    [(ngModel)]="joinerParticipant.name" #participantNameInput="ngModel">
+                <!-- <input type="text" class="form-control" id="participantName" name="participantName" placeholder="Your name (optional)"
+                    [(ngModel)]="joinerParticipant.name" #participantNameInput="ngModel"> -->
             </div>
             <button type="submit" [disabled]="joinMeetingForm.form.invalid" class="btn btn-primary">Join meeting</button>
         </form>

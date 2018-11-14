@@ -1,6 +1,6 @@
 <div *ngIf="meeting" class="meeting-center">
         <h1>Planning poker meeting</h1>
-        <h3>{{meeting.name}}</h3>
+        <h3>Meeting name: {{meeting.name}}</h3>
         <br>
         <h5 *ngIf="meeting.participants">Number of participants: {{meeting.participants.length}}</h5>
         <span><b>Meeting id:</b> <i>{{meeting.uuid}}</i></span>

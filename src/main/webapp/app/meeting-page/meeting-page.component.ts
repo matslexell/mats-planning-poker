@@ -6,6 +6,7 @@ import { MeetingService } from 'app/entities/meeting';
 import { ParticipantService } from 'app/entities/participant';
 import { MeetingUpdateService } from 'app/core/meeting-update/meeting-update.service';
 import { JhiEventManager } from 'ng-jhipster';
+import { Participant } from 'app/shared/model/participant.model';
 
 @Component({
     selector: 'jhi-meeting-page',
@@ -20,6 +21,7 @@ export class MeetingPageComponent implements OnInit, OnDestroy {
     myVote: String = '';
     results: { value: String; count: Number }[];
     token: String;
+    me: Participant;
 
     constructor(
         private activatedRoute: ActivatedRoute,
@@ -37,9 +39,8 @@ export class MeetingPageComponent implements OnInit, OnDestroy {
         this.meeting.uuid = this.activatedRoute.snapshot.paramMap.get('meetingUuid');
 
         this.activatedRoute.queryParams.subscribe(params => {
-            this.meetingService.joinMeeting(this.meeting.uuid, params.participantName).subscribe(jwt => {
-                console.log('JWT FROM SERVER', jwt);
-                this.token = jwt;
+            this.meetingService.joinMeeting(this.meeting.uuid, params.participantName).subscribe(participantToken => {
+                this.token = participantToken;
                 this.update();
                 this.connect(this.meeting.uuid, this.token);
             });
