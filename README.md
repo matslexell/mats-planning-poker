@@ -1,4 +1,26 @@
 # MatsPlanningPoker
+This app is available at:
+[https://mats-planning-poker.herokuapp.com](https://mats-planning-poker.herokuapp.com)
+
+The app is run on a free heroku deployment. It might take one or two minutes to get it started, since the backend shuts down if the app hasn't been used in a while.
+
+To run locally install Java, Maven and Node.js. Run the following commands:
+
+    npm install
+    mvn clean install
+
+To start the backend:
+
+    ./mvnw
+
+To start the front end:
+
+    npm start
+
+
+---------------
+---------------
+# Readme from JHipster
 This application was generated using JHipster 5.4.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v5.4.0](https://www.jhipster.tech/documentation-archive/v5.4.0).
 
 ## Development

@@ -25,6 +25,9 @@ import java.util.Optional;
 
 /**
  * REST controller for managing Participant.
+ * <p>
+ * Reason for using token instead of id when updating participant is so noone can guess the ids and ruin stuff using
+ * postman. Ie just a precautionary measure
  */
 @RestController
 @RequestMapping("/api")
@@ -81,7 +84,7 @@ public class ParticipantResource {
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, participantDTO.getId().toString()))
             .body(result);
     }
-    
+
     /**
      * PUT  /participants : Updates an existing participant.
      *
@@ -93,14 +96,14 @@ public class ParticipantResource {
     @PutMapping("/participants/vote")
     @Timed
     public ResponseEntity<ParticipantDTO> updateParticipantFromVote(@RequestParam(value = "vote") String vote, @RequestParam(value = "token") String token) throws URISyntaxException {
-        
+
         if (!participantService.existsByToken(token)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-    
+
         ParticipantDTO participantDTO = participantService.findByToken(token).get();
         participantDTO.setVote(vote);
-        
+
         return updateParticipant(participantDTO);
     }
 
@@ -132,11 +135,14 @@ public class ParticipantResource {
         Optional<ParticipantDTO> participantDTO = participantService.findOne(id);
         return ResponseUtil.wrapOrNotFound(participantDTO);
     }
-    
+
     /**
      * GET  /participants/:id : get the "token" participant.
+     * <p>
+     * Reason for using token instead of id when updating participant is so noone can guess the ids and ruin stuff using
+     * postman. Ie just a precautionary measure
      *
-     * @param id the id of the participantDTO to retrieve
+     * @param token the id of the participantDTO to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the participantDTO, or with status 404 (Not Found)
      */
     @GetMapping("/participants/token/{token}")
@@ -146,7 +152,7 @@ public class ParticipantResource {
         Optional<ParticipantDTO> participantDTO = participantService.findByToken(token);
         return ResponseUtil.wrapOrNotFound(participantDTO);
     }
-    
+
     /**
      * DELETE  /participants/:id : delete the "id" participant.
      *

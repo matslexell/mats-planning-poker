@@ -25,9 +25,9 @@ public class MeetingUpdateService implements ApplicationListener<SessionDisconne
     private static final Logger log = LoggerFactory.getLogger(MeetingUpdateService.class);
 
     private final SimpMessageSendingOperations messagingTemplate;
-    
+
     private final ParticipantService participantService;
-    
+
     HashMap<String, String> sessionIdToMeetingUuidMap = new HashMap<>();
     HashMap<String, String> sessionIdToParticipantTokenMap = new HashMap<>();
 
@@ -36,6 +36,14 @@ public class MeetingUpdateService implements ApplicationListener<SessionDisconne
         this.participantService = participantService;
     }
 
+    /**
+     * Informs that somone has voted or joined a meeting.
+     *
+     * @param meetingUuid
+     * @param token
+     * @param stompHeaderAccessor
+     * @throws InterruptedException
+     */
     @MessageMapping("/meetingUpdate/server/{meetingUuid}/{token}")
     public void sendActivity(@DestinationVariable String meetingUuid, @DestinationVariable String token,
                              StompHeaderAccessor stompHeaderAccessor) throws InterruptedException {
@@ -45,6 +53,11 @@ public class MeetingUpdateService implements ApplicationListener<SessionDisconne
         messagingTemplate.convertAndSend("/meetingUpdate/client/" + meetingUuid, new ActivityDTO());
     }
 
+    /**
+     * When someone closes a connection.
+     *
+     * @param event
+     */
     @Override
     public void onApplicationEvent(SessionDisconnectEvent event) {
         log.debug("On Application event {}, meetingId : {}", event, sessionIdToMeetingUuidMap.get(event.getSessionId()));

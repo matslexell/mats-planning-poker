@@ -54,8 +54,6 @@ export class HomeComponent implements OnInit {
     }
 
     createMeeting() {
-        console.log('createMeeting', this.newMeeting, this.creatorParticipant);
-        this.newMeeting.uuid = 'abc123'; // Todo, create meeting
         this.meetingService.createFromName(this.newMeeting.name).subscribe(meeting => {
             this.router.navigate(['/planningPokerMeeting/' + meeting.uuid], {
                 queryParams: { participantName: this.creatorParticipant.name }
@@ -64,7 +62,6 @@ export class HomeComponent implements OnInit {
     }
 
     joinMeeting() {
-        console.log('joinMeeting', this.existingMeeting, this.joinerParticipant);
         this.router.navigate(['/planningPokerMeeting/' + this.existingMeeting.uuid], {
             queryParams: { participantName: this.joinerParticipant.name }
         });
