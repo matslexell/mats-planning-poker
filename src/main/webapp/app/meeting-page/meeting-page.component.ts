@@ -14,7 +14,7 @@ import { Participant } from 'app/shared/model/participant.model';
     styleUrls: ['meeting-page.scss']
 })
 export class MeetingPageComponent implements OnInit, OnDestroy {
-    planningPokerValues = ['0', '1/2', '1', '2', '3', '5', '8', '13'];
+    planningPokerValues = ['0', '1/2', '1', '2', '3', '5', '8', '13', '20', '40', '100'];
 
     meeting: Meeting = {};
     url: String;
