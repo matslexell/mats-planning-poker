@@ -28,6 +28,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import static java.util.stream.IntStream.concat;
+import static java.util.stream.IntStream.range;
 
 /**
  * REST controller for managing Meeting.
@@ -207,17 +209,19 @@ public class MeetingResource {
 	 * @return
 	 */
 	private String randomUuid() {
-		return UUID.randomUUID().toString().substring(24, 36);
-		
+//		return UUID.randomUUID().toString().substring(24, 36);
+
 		// Create a pretty link like at goo.gl or bitly:
-//		IntStream intStream = concat(range(65, 90+1), concat(range(97, 122+1), range(48, 57+1)));
-//		int[] array = intStream.toArray();
-//
-//		StringBuilder stringBuilder = new StringBuilder();
-//
-//		for (int i = 0; i < 8; i++) {
-//			stringBuilder.append((char) array[(int) (Math.random() * array.length)]);
-//		}
-//		return stringBuilder.toString();
+		int[] array = concat(range(65, 90 + 1), concat(range(97, 122 + 1), range(48, 57 + 1))).toArray();
+		StringBuilder stringBuilder;
+
+		do {
+			stringBuilder = new StringBuilder();
+			for (int i = 0; i < 4; i++) {
+			stringBuilder.append((char) array[(int) (Math.random() * array.length)]);
+			}
+		} while (meetingService.existsByMeetingUuid(stringBuilder.toString()));
+
+		return stringBuilder.toString();
 	}
 }
