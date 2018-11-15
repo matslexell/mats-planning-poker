@@ -44,6 +44,9 @@
                         The meeting id is required.
                     </small>
                 </div>
+                <small class="form-text text-danger" *ngIf="meetingNotFoundError">
+                    No meeting with the provided id was found
+                </small>
                 <br>
                 <!-- <input type="text" class="form-control" id="participantName" name="participantName" placeholder="Your name (optional)"
                     [(ngModel)]="joinerParticipant.name" #participantNameInput="ngModel"> -->

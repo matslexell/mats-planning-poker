@@ -22,6 +22,8 @@ export class HomeComponent implements OnInit {
     existingMeeting: Meeting = {};
     joinerParticipant: Participant = {};
 
+    meetingNotFoundError: boolean;
+
     constructor(
         private principal: Principal,
         private loginModalService: LoginModalService,
@@ -31,6 +33,7 @@ export class HomeComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        this.meetingNotFoundError = false;
         this.principal.identity().then(account => {
             this.account = account;
         });
@@ -62,8 +65,12 @@ export class HomeComponent implements OnInit {
     }
 
     joinMeeting() {
-        this.router.navigate(['/planningPokerMeeting/' + this.existingMeeting.uuid], {
-            queryParams: { participantName: this.joinerParticipant.name }
+        this.meetingService.getByUuid(this.existingMeeting.uuid).subscribe(data => {
+            this.router.navigate(['/planningPokerMeeting/' + this.existingMeeting.uuid], {
+                queryParams: { participantName: this.joinerParticipant.name }
+            });
+        }, error => {
+            this.meetingNotFoundError = true;
         });
     }
 }
